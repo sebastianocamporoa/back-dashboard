@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const usersController = require('./usersController');
 const hobbiesController = require('./hobbiesController');
 const authController = require('./authController');
@@ -9,6 +10,7 @@ const socketIO = require('socket.io');
 const verifyToken = require('./middleware/verifyToken');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 // Configuración de la conexión a la base de datos PostgreSQL
