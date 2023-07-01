@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const usersController = require('./usersController');
 const hobbiesController = require('./hobbiesController');
+const authController = require('./authController');
 const { Pool } = require('pg');
 const http = require('http');
 const socketIO = require('socket.io');
@@ -64,8 +65,14 @@ app.post('/api/users/:id/hobbies', hobbiesController.addHobbyToUser);
 // Ruta para eliminar un hobby de un usuario
 app.delete('/api/users/:id/hobbies/:hobbyId', hobbiesController.removeHobbyFromUser);
 
+// Ruta para iniciar sesión
+app.post('/api/login', authController.login);
+
+// Ruta para registrar un nuevo usuario
+app.post('/api/register', authController.register);
+
 // Iniciar el servidor HTTP
-const port = 3000;
+const port = 3001;
 server.listen(port, () => {
   console.log(`Servidor iniciado en el puerto ${port}`);
 });
