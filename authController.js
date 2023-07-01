@@ -4,14 +4,14 @@ const jwt = require("jsonwebtoken");
 // Función para iniciar sesión
 async function login(req, res) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Verifica si el usuario existe en la base de datos
-    const user = await getUserByUsername(req, username);
+    const user = await getUserByEmail(req, email);
     if (!user) {
       return res
         .status(401)
-        .json({ message: "Nombre de usuario o contraseña incorrectos" });
+        .json({ message: "Correo electrónico o contraseña incorrectos" });
     }
 
     // Comprueba la contraseña
@@ -19,7 +19,7 @@ async function login(req, res) {
     if (!isPasswordValid) {
       return res
         .status(401)
-        .json({ message: "Nombre de usuario o contraseña incorrectos" });
+        .json({ message: "Correo electrónico o contraseña incorrectos" });
     }
 
     // Si las credenciales son válidas, genera un token de autenticación
@@ -94,6 +94,19 @@ async function getUserByUsername(req, username) {
     return result.rows[0];
   } catch (error) {
     console.error("Error al obtener el usuario por nombre de usuario:", error);
+    throw error;
+  }
+}
+
+// Función auxiliar para obtener un usuario por email desde la base de datos
+async function getUserByEmail(req, email) {
+  try {
+    const query = "SELECT * FROM users WHERE email = $1";
+    const values = [email];
+    const result = await req.pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error al obtener el usuario por email:", error);
     throw error;
   }
 }
