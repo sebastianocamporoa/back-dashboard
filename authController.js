@@ -7,7 +7,7 @@ async function login(req, res) {
     const { username, password } = req.body;
 
     // Verifica si el usuario existe en la base de datos
-    const user = await getUserByUsername(username);
+    const user = await getUserByUsername(req, username);
     if (!user) {
       return res
         .status(401)
@@ -26,7 +26,7 @@ async function login(req, res) {
     const token = generateAuthToken(user.id);
 
     // Envía el token al cliente
-    res.json({ token });
+    res.json({ token: token, userId: user.id });
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
     res.status(500).json({ message: "Error al iniciar sesión" });
@@ -101,7 +101,8 @@ async function getUserByUsername(req, username) {
 // Función auxiliar para generar un token de autenticación
 function generateAuthToken(userId) {
   const secretKey = "sebastian_ocampo_roa";
-  const token = jwt.sign({ userId }, secretKey);
+  const expirationTime = 10 * 60;
+  const token = jwt.sign({ userId }, secretKey, { expiresIn: expirationTime});
   return token;
 }
 
