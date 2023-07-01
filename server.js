@@ -6,6 +6,7 @@ const authController = require('./authController');
 const { Pool } = require('pg');
 const http = require('http');
 const socketIO = require('socket.io');
+const verifyToken = require('./middleware/verifyToken');
 
 const app = express();
 app.use(bodyParser.json());
@@ -42,28 +43,28 @@ io.on('connection', (socket) => {
 });
 
 // Ruta para obtener una lista de usuarios
-app.get('/api/users', usersController.getUsers);
+app.get('/api/users', verifyToken, usersController.getUsers);
 
 // Ruta para obtener un usuario específico
-app.get('/api/users/:id', usersController.getUserById);
+app.get('/api/users/:id', verifyToken, usersController.getUserById);
 
 // Ruta para crear un nuevo usuario
-app.post('/api/users', usersController.createUser);
+app.post('/api/users', verifyToken, usersController.createUser);
 
 // Ruta para actualizar un usuario existente
-app.put('/api/users/:id', usersController.updateUser);
+app.put('/api/users/:id', verifyToken, usersController.updateUser);
 
 // Ruta para eliminar un usuario
-app.delete('/api/users/:id', usersController.deleteUser);
+app.delete('/api/users/:id', verifyToken, usersController.deleteUser);
 
 // Ruta para obtener los hobbies de un usuario específico
-app.get('/api/users/:id/hobbies', hobbiesController.getHobbiesByUserId);
+app.get('/api/users/:id/hobbies', verifyToken, hobbiesController.getHobbiesByUserId);
 
 // Ruta para agregar un nuevo hobby a un usuario
-app.post('/api/users/:id/hobbies', hobbiesController.addHobbyToUser);
+app.post('/api/users/:id/hobbies', verifyToken, hobbiesController.addHobbyToUser);
 
 // Ruta para eliminar un hobby de un usuario
-app.delete('/api/users/:id/hobbies/:hobbyId', hobbiesController.removeHobbyFromUser);
+app.delete('/api/users/:id/hobbies/:hobbyId', verifyToken, hobbiesController.removeHobbyFromUser);
 
 // Ruta para iniciar sesión
 app.post('/api/login', authController.login);
