@@ -18,13 +18,13 @@ async function getHobbiesByUserId(req, res) {
 // Agregar un nuevo hobby a un usuario
 async function addHobbyToUser(req, res) {
   const userId = req.params.id;
-  const { name } = req.body;
+  const { hobbie } = req.body;
   const pool = req.pool;
 
   try {
     const query =
-      "INSERT INTO hobbies (user_id, name) VALUES ($1, $2) RETURNING *";
-    const values = [userId, name];
+      "INSERT INTO hobbies (userid, hobbie) VALUES ($1, $2) RETURNING *";
+    const values = [userId, hobbie];
     const result = await pool.query(query, values);
 
     // Enviar actualización en tiempo real a los clientes conectados
