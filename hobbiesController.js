@@ -11,28 +11,29 @@ async function getHobbiesByUserId(req, res) {
 
     res.json(result.rows);
   } catch (error) {
+    console.error(error); // Mostrar el error en la consola
     res.status(500).json({ error: "Error al obtener los hobbies del usuario" });
   }
 }
 
 // Agregar un nuevo hobby a un usuario
 async function addHobbyToUser(req, res) {
-  const userId = req.params.id;
-  const { hobbie } = req.body;
+  const userId = parseInt(req.params.id);
+  const { hobby } = req.body;
   const pool = req.pool;
 
   try {
     const query =
-      "INSERT INTO hobbies (userid, hobbie) VALUES ($1, $2) RETURNING *";
-    const values = [userId, hobbie];
+      "INSERT INTO hobbies (userid, hobby) VALUES ($1, $2) RETURNING *";
+    const values = [userId, hobby];
     const result = await pool.query(query, values);
 
-    // Enviar actualización en tiempo real a los clientes conectados
     const newHobby = result.rows[0];
-    req.app.get("io").emit("hobbyAdded", newHobby);
+    req.io.emit("hobbyAdded", newHobby);
 
     res.status(201).json(newHobby);
   } catch (error) {
+    console.error(error); // Mostrar el error en la consola
     res.status(500).json({ error: "Error al agregar el hobby al usuario" });
   }
 }
@@ -44,15 +45,15 @@ async function removeHobbyFromUser(req, res) {
   const pool = req.pool;
 
   try {
-    const query = "DELETE FROM hobbies WHERE user_id = $1 AND id = $2";
+    const query = "DELETE FROM hobbies WHERE userid = $1 AND id = $2";
     const values = [userId, hobbyId];
     await pool.query(query, values);
 
-    // Enviar actualización en tiempo real a los clientes conectados
-    req.app.get("io").emit("hobbyRemoved", hobbyId);
+    req.io.emit("hobbyRemoved", hobbyId);
 
     res.sendStatus(204);
   } catch (error) {
+    console.error(error); // Mostrar el error en la consola
     res.status(500).json({ error: "Error al eliminar el hobby del usuario" });
   }
 }
