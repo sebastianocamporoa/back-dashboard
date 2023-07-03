@@ -4,9 +4,10 @@ async function getHobbiesByUserId(req, res) {
   const pool = req.pool;
 
   try {
-    const query = "SELECT * FROM hobbies WHERE user_id = $1";
+    const query = "SELECT * FROM hobbies WHERE userid = $1";
     const values = [userId];
     const result = await pool.query(query, values);
+    console.log(result);
 
     res.json(result.rows);
   } catch (error) {
