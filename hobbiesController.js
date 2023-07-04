@@ -58,8 +58,32 @@ async function removeHobbyFromUser(req, res) {
   }
 }
 
+// Actualizar un hobby de un usuario
+async function updateHobby(req, res) {
+  const userId = req.params.id;
+  const hobbyId = req.params.hobbyId;
+  const { hobby } = req.body;
+  const pool = req.pool;
+
+  try {
+    const query =
+      "UPDATE hobbies SET hobby = $1 WHERE userid = $2 AND id = $3 RETURNING *";
+    const values = [hobby, userId, hobbyId];
+    const result = await pool.query(query, values);
+
+    const updatedHobby = result.rows[0];
+    req.io.emit("hobbyUpdated", updatedHobby);
+
+    res.json(updatedHobby);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el hobby del usuario" });
+  }
+}
+
 module.exports = {
   getHobbiesByUserId,
   addHobbyToUser,
   removeHobbyFromUser,
+  updateHobby,
 };

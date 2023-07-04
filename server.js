@@ -95,6 +95,13 @@ app.delete(
   hobbiesController.removeHobbyFromUser
 );
 
+// Ruta para actualizar un hobby de un usuario
+app.put(
+  "/api/users/:id/hobbies/:hobbyId",
+  verifyToken,
+  hobbiesController.updateHobby
+);
+
 // Ruta para iniciar sesión
 app.post("/api/login", authController.login);
 
